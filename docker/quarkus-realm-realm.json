@@ -1,7 +1,7 @@
 {
   "realm": "quarkus-realm",
   "enabled": true,
-  "registrationAllowed": false,
+  "registrationAllowed": true,
   "loginWithEmailAllowed": true,
   "roles": {
     "realm": [
@@ -9,6 +9,17 @@
       { "name": "admin", "composite": false }
     ]
   },
+  "groups": [
+    {
+      "name": "users",
+      "realmRoles": ["user"]
+    },
+    {
+      "name": "admins",
+      "realmRoles": ["admin"]
+    }
+  ],
+  "defaultGroups": ["/users"],
   "clients": [
     {
       "clientId": "quarkus-app",
@@ -39,7 +50,8 @@
           "temporary": false
         }
       ],
-      "realmRoles": ["user"]
+      "realmRoles": ["user"],
+      "groups": ["/users"]
     },
     {
       "username": "admin",
@@ -55,7 +67,8 @@
           "temporary": false
         }
       ],
-      "realmRoles": ["user", "admin"]
+      "realmRoles": ["user", "admin"],
+      "groups": ["/users", "/admins"]
     }
   ]
 }

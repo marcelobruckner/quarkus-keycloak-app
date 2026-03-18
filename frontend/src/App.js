@@ -1,41 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import keycloak from './utils/keycloak';
 import Header from './components/Header';
 import Home from './pages/Home';
 
-function App() {
-  const [authenticated, setAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
-
+function App({ authenticated }) {
   useEffect(() => {
-    keycloak.init({ 
-      onLoad: 'login-required',
-      checkLoginIframe: false,
-      pkceMethod: 'S256'
-    }).then((auth) => {
-      setAuthenticated(auth);
-      setLoading(false);
-
-      setInterval(() => {
-        keycloak.updateToken(70).catch(() => {
-          console.log('Falha ao renovar token');
-        });
-      }, 60000);
-
-    }).catch((err) => {
-      console.error('Falha na autenticação', err);
-      setLoading(false);
-    });
-  }, []);
-
-  if (loading) {
-    return (
-      <div style={styles.loading}>
-        <h2>Carregando...</h2>
-        <p>Conectando ao Keycloak</p>
-      </div>
-    );
-  }
+    if (!authenticated) return;
+    const interval = setInterval(() => {
+      keycloak.updateToken(70).catch(() => console.log('Falha ao renovar token'));
+    }, 60000);
+    return () => clearInterval(interval);
+  }, [authenticated]);
 
   if (!authenticated) {
     return (
